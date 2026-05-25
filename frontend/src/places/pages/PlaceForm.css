@@ -1,0 +1,11 @@
+.place-form {
+  list-style: none;
+  margin: 0.2rem auto;
+  padding: 1.3rem;
+  width: 90%;
+  max-width: 44rem;
+  box-shadow: var(--shadow-soft);
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: var(--bg-surface);
+}
