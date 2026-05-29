@@ -23,7 +23,7 @@ const getPlaceById = async (req, res, next) => {
 
   if (!place) {
     const error = new HttpError(
-      'Could not find a place for the provided id.',
+      'Could not find place for the provided id.',
       404
     );
     return next(error);
@@ -40,7 +40,7 @@ const getPlacesByUserId = async (req, res, next) => {
     userWithPlaces = await User.findById(userId).populate('places');
   } catch (err) {
     const error = new HttpError(
-      'Fetching places failed, please try again later',
+      'Fetching places failed, please try again later.',
       500
     );
     return next(error);
@@ -52,11 +52,7 @@ const getPlacesByUserId = async (req, res, next) => {
     );
   }
 
-  res.json({
-    places: userWithPlaces.places.map(place =>
-      place.toObject({ getters: true })
-    )
-  });
+  res.json({ places: userWithPlaces.places.map(place => place.toObject({ getters: true })) });
 };
 
 const createPlace = async (req, res, next) => {
@@ -82,7 +78,7 @@ const createPlace = async (req, res, next) => {
     address,
     location: coordinates,
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Empire_State_Building_%28aerial_view%29.jpg/400px-Empire_State_Building_%28aerial_view%29.jpg',
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Empire_State_Building_%28aerial_view%29.jpg/400px-Empire_State_Building_%28aerial_view%29.jpg', // => File Upload module, will be replaced with real image url
     creator
   });
 
@@ -90,12 +86,15 @@ const createPlace = async (req, res, next) => {
   try {
     user = await User.findById(creator);
   } catch (err) {
-    const error = new HttpError('Creating place failed, please try again', 500);
+    const error = new HttpError(
+      'Creating place failed, please try again.',
+      500
+    );
     return next(error);
   }
 
   if (!user) {
-    const error = new HttpError('Could not find user for provided id', 404);
+    const error = new HttpError('Could not find user for provided id.', 404);
     return next(error);
   }
 
@@ -104,9 +103,9 @@ const createPlace = async (req, res, next) => {
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
-    await createdPlace.save({ session: sess });
-    user.places.push(createdPlace);
-    await user.save({ session: sess });
+    await createdPlace.save({ session: sess }); 
+    user.places.push(createdPlace); 
+    await user.save({ session: sess }); 
     await sess.commitTransaction();
   } catch (err) {
     const error = new HttpError(
@@ -179,9 +178,9 @@ const deletePlace = async (req, res, next) => {
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
-    await place.remove({ session: sess });
+    await Place.deleteOne({ _id: placeId }, { session: sess });
     place.creator.places.pull(place);
-    await place.creator.save({ session: sess });
+    await place.creator.save({session: sess});
     await sess.commitTransaction();
   } catch (err) {
     const error = new HttpError(
@@ -190,7 +189,7 @@ const deletePlace = async (req, res, next) => {
     );
     return next(error);
   }
-
+  
   res.status(200).json({ message: 'Deleted place.' });
 };
 
