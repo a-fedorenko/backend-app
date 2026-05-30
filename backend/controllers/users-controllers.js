@@ -24,6 +24,7 @@ const signup = async (req, res, next) => {
       new HttpError('Invalid inputs passed, please check your data.', 422)
     );
   }
+
   const { name, email, password } = req.body;
 
   let existingUser;
@@ -44,14 +45,13 @@ const signup = async (req, res, next) => {
     );
     return next(error);
   }
-
   const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(name)}`;
   const createdUser = new User({
     name,
     email,
-    image: avatarUrl,
+    image: req.file ? req.file.path : avatarUrl,
     password,
-    places: []
+    places: [],
   });
 
   try {
